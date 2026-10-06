@@ -1,68 +1,98 @@
-#  JobFlow : A web application to revolutionize the job search process
+# JobFlow
 
-JobFlow is an innovative web application that aims to revolutionize the job search process by providing a comprehensive and user-friendly platform for job seekers. The project was undertaken with the primary objective of simplifying the job application process and helping individuals stay organized and efficient throughout their job search journey. 
+**Stay organised and track your job applications.** JobFlow is a full-stack web app that gives job seekers one place to log every application, add notes and keep track of where each one stands, and to search live job listings without leaving the site.
 
-When users sign up to JobFlow, they are able to access a Job Application Tracker in order to manage their job applications. They can add details to the table, as well as update and delete them. 
+Built by a team of five as a group project, from wireframes through to a tested React front end and a Node/Express API backed by MySQL. See the [contributors](https://github.com/oliviao12345/JobFlow/graphs/contributors) for the team, and the [project report](JobFlow%20Project%20Report.pdf) for the full write-up.
 
-The project comprises a frontend which is built with React and a backend built with Node.js, Express and Firebase. The API connects to a mySQL database (via Sequelize) and it performs CRUD operations on the database. JobFlow also offers an integrated Job Search page, which allows users to search for jobs via an external [JSearch API](https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch/details).
+<p align="center"><img src="docs/screenshots/home.png" alt="The JobFlow landing page" width="820" /></p>
 
+## What it does
 
-## Technologies Used:
+- **Application tracker.** Sign up, then add each job with its title, company, status, salary, date applied and notes. Edit or delete entries any time.
+- **Job details.** Open any application to see its details and a star rating.
+- **Integrated job search.** Search by role and location (for example "Software Engineer in London") against live listings from the JSearch API.
+- **Real accounts.** Sign-up and login run through Firebase Authentication. The tracker's API routes are protected, so users only reach their own data.
+- **A guided "How it works" page,** plus About, Team and Contact pages with form validation.
 
-- React
-- Node.js
-- Express (API)
-- mySQL (database)
-- Sequelize (ORM)
-- Clever Cloud (database hosting service)
-- Postman
-- Firebase (external API for user management and authentication)
-- Jest (testing)
-- JSearch API (external API)
+<p align="center">
+  <img src="docs/screenshots/jobsearch.png" alt="JobFlow job search" width="400" />
+  <img src="docs/screenshots/howitworks.png" alt="JobFlow how it works page" width="400" />
+</p>
 
-# Getting Started
+## Design and build choices
 
-## Please note
-This project requires node version 16.4 or later.
+- **A clear teal-and-white identity** carries from the hero image through the nav, buttons and table headers.
+- **Planned before it was built.** Page layouts were sketched first (see [`prototype/`](prototype)) and the front end follows them.
+- **Component-per-feature front end.** Each feature lives in its own folder under `client/src/components` with its own styles, and routing is handled by React Router.
+- **Layered API.** Express routes sit on Sequelize models, with an authentication middleware in front of the protected job routes.
+- **Tested on both sides.** Jest and supertest cover the API routes, and React Testing Library covers the UI.
 
-## Prerequsities
-1. Download mySQl on your machine https://www.mysql.com/downloads/
-2. Create a new database called 'JobFlow' by using the command 'CREATE DATABASE JobFlow'
+## Tech stack
 
-## To run the application
+| Layer | Tools |
+| --- | --- |
+| **Front end** | React 18, React Router 6, React Bootstrap, Axios, Font Awesome |
+| **Back end** | Node.js, Express 4, Sequelize 6 (ORM), `mysql2` |
+| **Database** | MySQL, hosted on Clever Cloud (optional) or run locally |
+| **Auth** | Firebase Authentication (client) and Firebase Admin (API) |
+| **External API** | [JSearch](https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch/details) via RapidAPI |
+| **Testing** | Jest, supertest, React Testing Library |
+| **Design and planning** | draw.io wireframes, Postman |
 
-1. **Open your Code Editor**, create a local copy of the project from GitHub repository: https://github.com/irina-sheveliova/CFG-Job-tracker.git  
+## API overview
 
-2. **Navigate to the api folder:**   
-- Open a terminal and type: `cd api`
-- Download dependencies for api folder: `npm install`
-- In the `.env` file please enter your mySQL password and ensure the connection details are correct when using local host.  
+| Route | Methods | Auth |
+| --- | --- | --- |
+| `/api/users`, `/api/users/:UID` | GET, POST, DELETE | Public |
+| `/api/contactus`, `/api/contactus/:id` | GET, POST, DELETE | Public |
+| `/api/jobs`, `/api/jobs/:id` | GET, POST, PUT, DELETE | Firebase token required |
 
-  <img src="env_image.png" width=60% style="padding-top:20px">  
+## Getting started
 
-- In the .env file you will see that there is also an optional config for running the database using a cloud service provided by Clever Cloud.
+Requires **Node 16.4 or later** and **MySQL**.
 
-- Run the backend: `npm start`
-- As a result you should see a message in your terminal "Server is running on port 8080". This means the api is running on `http://localhost:8080`.
+1. **Create the database**
 
+   ```sql
+   CREATE DATABASE JobFlow;
+   ```
 
-3. **Navigate to the client folder:**  
-- Open a second terminal and type: `cd client`
-- Download dependencies for client folder: `npm install`
-- Run the client: `npm start`
-- As a result you should see a message in your terminal "Compiled successfully!" and JobFlow Homepage should launch in your browser.
+2. **Start the API**
 
-The application should now be available on `http://localhost:3000`, but please check the output of the `npm start` command to be sure.
+   ```bash
+   cd api
+   npm install
+   npm start
+   ```
 
+   Create an `api/.env` file with your connection details: `HOST`, `DATABASE`, `DB_USER`, `DB_PASSWORD`, `DIALECT` (use `mysql`) and optionally `PORT`. You will also need your own Firebase service-account credentials for the API's token check. The API runs on <http://localhost:8080>.
 
-## To run tests
-Please run the backend unit tests locally, with local host. 
-To run tests in the respective api and client folders, you can enter the command:
+3. **Start the client** (in a second terminal)
+
+   ```bash
+   cd client
+   npm install
+   npm start
+   ```
+
+   Open <http://localhost:3000>. Add your own Firebase web config in `client/src/firebase.js` and a RapidAPI key for the job search in `client/src/components/JobSearch/search.js`.
+
+## Running the tests
 
 ```bash
-npm test
+cd api && npm test      # API tests (run against a local MySQL database)
+cd client && npm test   # front-end tests
 ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Project layout
 
+| Path | Contents |
+| --- | --- |
+| `client/` | React app: `components/` (one folder per feature), `pages/`, `context/` (auth), `__tests__/` |
+| `api/` | Express API: `routes/`, `models/`, `tests/` |
+| `prototype/` | Wireframes and flow diagram |
+| `docs/` | README screenshots |
+
+## What's next
+
+Integration with other job boards, email notifications, application insights and a customisable dashboard, as outlined in the original wireframes.
